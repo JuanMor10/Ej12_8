@@ -1,24 +1,35 @@
 package com.jmorcas;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author: Juan Mora
- * @version: 09/04/2022
+ * @author : Juan Mora
+ * @version : 09/04/2022
  */
 public class Auxiliar {
     /**
@@ -81,7 +92,71 @@ public class Auxiliar {
     }
 
     /**
+     * metodo para formar un arraylist de las personas de un JSON
+     * @param path ruta
+     * @return lista
+     * @throws IOException excepcion
+     */
+    public static ArrayList<Persona> leerPersonasJson(Path path) throws IOException {
+        Reader reader = Files.newBufferedReader(path);
+        Type tipoLista=new TypeToken<List<Persona>>() {}.getType();
+        ArrayList <Persona> personasJSON=new Gson().fromJson(reader,tipoLista);
+        reader.close();
+        return personasJSON;
+    }
+
+    public static void escribirCSV(ArrayList<Persona> lista){
+
+            try (BufferedWriter bf=new BufferedWriter(new FileWriter("escribocsv.csv"))){
+                for (Persona per:lista) {
+                    bf.write(per.toString());
+                    bf.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
+    public static void escribirXML(ArrayList<Persona> lista) throws ParserConfigurationException, TransformerException {
+        org.jdom2.Element personas = new org.jdom2.Element("personas");
+        org.jdom2.Document doc = new org.jdom2.Document(personas);
+
+
+        for (Persona per:lista){
+            org.jdom2.Element persona = new org.jdom2.Element("persona");
+            personas.addContent(persona);
+
+            org.jdom2.Element firstName = new org.jdom2.Element("firstName");
+            firstName.setText(per.getFirstName());
+            org.jdom2.Element lastName = new org.jdom2.Element("lastName");
+            lastName.setText(per.getLastName());
+            org.jdom2.Element email = new org.jdom2.Element("email");
+            email.setText(per.getEmail());
+            org.jdom2.Element country = new org.jdom2.Element("country");
+            country.setText(per.getCountry());
+            org.jdom2.Element gender = new org.jdom2.Element("gender");
+            gender.setText(per.getGender());
+
+            persona.addContent(firstName);
+            persona.addContent(lastName);
+            persona.addContent(email);
+            persona.addContent(country);
+            persona.addContent(gender);
+
+        }
+        XMLOutputter xml=new XMLOutputter();
+        xml.setFormat(Format.getPrettyFormat());
+        try {
+            xml.output(doc,new FileWriter("persona.xml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
      * Metodo statico que lee un archivo JSON y devuelve un array de esto
+     * Para esta parte importamos la libreria json-simple-1.1
      * @param file ruta del archivo
      * @return array de los datos del archivo json
      */

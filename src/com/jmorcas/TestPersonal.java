@@ -1,5 +1,8 @@
 package com.jmorcas;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,18 +33,24 @@ public class TestPersonal {
             menu(personal, sc, numero);
         } while (Integer.parseInt(numero) != 0);
 
-        Auxiliar.writeCSVPersonas(personal.getListaPersonas());
+       /* Auxiliar.writeCSVPersonas(personal.getListaPersonas());
         for (Persona perso:personal.getListaPersonas())
         System.out.println(perso);
-
-        personal.addPersonasXML("personal.xml");
-        for (Persona perso:personal.getListaPersonasxml(Paths.get("personal.xml")))
-        System.out.println(perso);
-
-        personal.addPersonasJSON(Paths.get("personal.json"));
-        for (Persona perso:personal.getListaPersonasJSON()){
-            System.out.println(perso);
+        */
+        Auxiliar.escribirCSV(personal.getListaPersonas());
+        try {
+            Auxiliar.escribirXML(personal.getListaPersonas());
+        } catch (ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
         }
+        //   personal.addPersonasXML("personal.xml");
+    //   for (Persona perso:personal.getListaPersonasxml(Paths.get("personal.xml")))
+    //   System.out.println(perso);
+
+    //   personal.addPersonasJSON(Paths.get("personal.json"));
+    //   for (Persona perso:personal.getListaPersonasJSON()){
+    //       System.out.println(perso);
+    //   }
 
 
     }
