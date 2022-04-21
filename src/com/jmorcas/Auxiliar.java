@@ -82,6 +82,7 @@ public class Auxiliar {
 
     /**
      * Metodo statico que lee un archivo JSON y devuelve un array de esto
+     * Para esta parte importamos la libreria json-simple-1.1
      * @param file ruta del archivo
      * @return array de los datos del archivo json
      */
