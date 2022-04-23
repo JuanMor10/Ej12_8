@@ -43,6 +43,8 @@ public class TestPersonal {
         } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
+
+        Auxiliar.crearJSONconGSON(personal.getListaPersonas());
         //   personal.addPersonasXML("personal.xml");
     //   for (Persona perso:personal.getListaPersonasxml(Paths.get("personal.xml")))
     //   System.out.println(perso);

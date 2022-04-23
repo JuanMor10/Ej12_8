@@ -1,6 +1,7 @@
 package com.jmorcas;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -25,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -117,6 +119,12 @@ public class Auxiliar {
             }
     }
 
+    /**
+     * Metodo para esscribir un archivo XML
+     * @param lista lista de personas que se escribirá el xml
+     * @throws ParserConfigurationException Excepcion
+     * @throws TransformerException Excepcion
+     */
     public static void escribirXML(ArrayList<Persona> lista) throws ParserConfigurationException, TransformerException {
         org.jdom2.Element personas = new org.jdom2.Element("personas");
         org.jdom2.Document doc = new org.jdom2.Document(personas);
@@ -173,10 +181,37 @@ public class Auxiliar {
                 persona.add(new Persona((String) jsonObject.get("firstName"), (String) jsonObject.get("lastName"),
                         (String)  jsonObject.get("email"),(String) jsonObject.get("country"),(String) jsonObject.get("gender")));
             }
+            archivo.close();
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+
         }
         return persona;
     }
 
+    /**
+     * Metodo para crear un archivo JSON
+     * @param lista array de personas para escribir un JSON
+     */
+    public static void crearJSONconGSON(ArrayList<Persona> lista){
+        Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        String a="";
+        Iterator<Persona> iterator=lista.iterator();
+        try(BufferedWriter bw=new BufferedWriter(new FileWriter("pruebaJSON.json"))) {
+            bw.write('['); //para escribir la primera raiz del JSON
+            iterator.next(); //para saltar los titulos de los apartados firstname, lastname etc
+            while (iterator.hasNext()){
+                Persona persona=iterator.next();
+                a=gson.toJson(persona);
+                bw.write(a);
+                if (iterator.hasNext())
+                    bw.write(',');
+                bw.newLine();
+            }
+            bw.write(']');
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
